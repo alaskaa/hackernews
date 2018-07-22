@@ -43,8 +43,11 @@ class App extends Component {
   }
 
   onDismiss(id) {
-    const filtered = this.state.list.filter(item => item.objectID !== id);
-    this.setState({list: filtered});
+    const filtered = item => item.objectID !== id;
+    const updatedHits = this.state.result.hits.filter(filtered);
+    this.setState({
+      result: { ...this.state.result.hits, hits: updatedHits } // makes a new immutable object containing the updatedHits (filtered)
+    });
     console.log(this);
   }
 
@@ -55,7 +58,6 @@ class App extends Component {
   render() {
     const { searchTerm, result } = this.state;
 
-    if (!result) { return null; }
     return (
       <div className="page">
         <div className="interactions">
@@ -66,11 +68,14 @@ class App extends Component {
           Search:
           </Search>
         </div>
-        <Table
-          list={result.hits}
-          pattern={searchTerm}
-          onDismiss={this.onDismiss}
-        />
+        { result
+          ? <Table
+            list={result.hits}
+            pattern={searchTerm}
+            onDismiss={this.onDismiss}
+          />
+          : null
+        }
         </div>
     );
     }
